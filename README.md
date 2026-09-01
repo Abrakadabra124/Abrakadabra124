@@ -8,17 +8,23 @@ I build reproducible, observable and secure delivery platforms with production-o
 
 | Project | Engineering evidence |
 |---|---|
-| [Enterprise DevSecOps Platform](https://github.com/Abrakadabra124/enterprise-devsecops-platform) | Java, PostgreSQL, Kafka, Kubernetes, GitOps, Vault, SLO and disaster recovery |
-| [Secure CI/CD](https://github.com/Abrakadabra124/secure-ci-cd) | SAST, SCA, secret scanning, SBOM, signed artifacts and rollback |
-| [Kubernetes Platform Lab](https://github.com/Abrakadabra124/kubernetes-platform-lab) | Helm, RBAC, NetworkPolicy, Pod Security, HPA/PDB and troubleshooting |
-| [Terraform Infrastructure](https://github.com/Abrakadabra124/terraform-infrastructure) | Modules, remote state, drift, Ansible integration and policy checks |
-| [Observability & SRE Lab](https://github.com/Abrakadabra124/observability-sre-lab) | Metrics, logs, traces, SLI/SLO, actionable alerts and incident response |
-| [Linux Secure Baseline](https://github.com/Abrakadabra124/linux-secure-baseline) | Linux hardening, networking, systemd, Ansible and fault injection |
+| [Linux Secure Baseline v1.0.0](https://github.com/Abrakadabra124/linux-secure-baseline/releases/tag/v1.0.0) | Three-node WSL2 lab, verified Ansible hardening, five failure scenarios, reverse-proxy/NAT diagnostics, security regression tests and recorded demo |
+| [Middle DevSecOps Roadmap](https://github.com/Abrakadabra124/github-middle-devsecops-roadmap/releases/tag/v0.1.0) | SberTech-oriented requirements, 24-week delivery plan, weekly DoD, repository governance and reproducible workstation bootstrap |
+
+## Planned Projects
+
+The repositories below contain milestones and issues but are not presented as completed work until their implementation phase starts:
+
+- [Secure CI/CD](https://github.com/Abrakadabra124/secure-ci-cd)
+- [Kubernetes Platform Lab](https://github.com/Abrakadabra124/kubernetes-platform-lab)
+- [Terraform Infrastructure](https://github.com/Abrakadabra124/terraform-infrastructure)
+- [Observability & SRE Lab](https://github.com/Abrakadabra124/observability-sre-lab)
+- [Enterprise DevSecOps Platform](https://github.com/Abrakadabra124/enterprise-devsecops-platform)
 
 ## Current Focus
 
-- Production troubleshooting across Linux, networking and Kubernetes
-- Secure software supply chain and policy-driven CI/CD
+- Completed Weeks 1-4: Linux, networking, Ansible hardening and troubleshooting
+- Next: secure Java build, container and CI/CD supply chain
 - OpenShift-compatible workload design
 - SLI/SLO, incident response and disaster recovery
 
