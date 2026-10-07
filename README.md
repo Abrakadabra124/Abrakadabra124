@@ -1,41 +1,57 @@
-# Abrakadabra124 — Middle DevSecOps / Platform Engineering Track
+# Abrakadabra124 | DevSecOps и Platform Engineering
 
-Строю воспроизводимые и безопасные delivery-платформы: Linux, Kubernetes, Terraform, Ansible, CI/CD, observability и application security.
+Развиваю лабораторную платформу безопасной доставки приложений: от проверок исходного кода до развёртывания, наблюдаемости и проверяемого восстановления. Основной стек: Linux, Python, PostgreSQL, Docker, Kubernetes, GitHub Actions и Flux.
 
-I build reproducible, observable and secure delivery platforms with production-oriented documentation, failure scenarios and measurable reliability targets.
+Цель портфолио - показывать инженерные решения, работающие проверки и ограничения, а не только список технологий.
 
-## Featured Portfolio
+## Основной проект: Enterprise DevSecOps Platform
 
-| Project | Engineering evidence |
+[Репозиторий и запуск](https://github.com/Abrakadabra124/enterprise-devsecops-platform) · [Архитектура](https://github.com/Abrakadabra124/enterprise-devsecops-platform/blob/main/docs/architecture.md) · [Инструкция по эксплуатации L1](https://github.com/Abrakadabra124/enterprise-devsecops-platform/blob/main/docs/runbooks/production-lab.md) · [GitHub Actions](https://github.com/Abrakadabra124/enterprise-devsecops-platform/actions/workflows/quality.yml)
+
+Production-like лаборатория на одном компьютере. FastAPI предоставляет HTTP API, PostgreSQL хранит данные, Kubernetes запускает приложение. Платформа связывает доставку и эксплуатацию в один проверяемый процесс:
+
+1. **Проверки до поставки.** CI (continuous integration, непрерывная интеграция) проверяет качество кода, тесты, работу с настоящим PostgreSQL и безопасность. Отрицательные тесты проверяют, что запрещённые сценарии действительно блокируются.
+2. **Контроль артефактов и развёртывания.** Cosign подписывает артефакты, а неизменяемые digest связывают разрешённую поставку с конкретным содержимым образа. Flux приводит Kubernetes к декларативному состоянию; SOPS шифрует секреты конфигурации.
+3. **Наблюдаемость.** Prometheus собирает метрики, Grafana показывает их, Alertmanager обрабатывает оповещения. Постоянные тома сохраняют состояние при замене pod; это проверяется сравнением данных до и после перезапуска.
+4. **Восстановление.** Согласованный PostgreSQL backup шифруется отдельным ключом age; Cosign подписывает индекс с контрольной суммой архива. Проверка восстанавливает данные в отдельный PostgreSQL, не перезаписывая рабочую базу.
+5. **Приёмка.** Скрипты проверяют конечное состояние, восстановление после сбоев, откат и защиту от подмены. Зелёный exit code отдельной команды не заменяет проверку всей цепочки.
+
+### Проверенный локальный срез
+
+Приёмка от **7 октября 2026 года**, исходное дерево опубликовано в [commit ee65d4a](https://github.com/Abrakadabra124/enterprise-devsecops-platform/commit/ee65d4a912d9361647312a110db1a14179201364):
+
+| Проверка | Результат |
 |---|---|
-| [Linux Secure Baseline v1.0.0](https://github.com/Abrakadabra124/linux-secure-baseline/releases/tag/v1.0.0) | Three-node WSL2 lab, verified Ansible hardening, five failure scenarios, reverse-proxy/NAT diagnostics, security regression tests and recorded demo |
-| [Middle DevSecOps Roadmap](https://github.com/Abrakadabra124/github-middle-devsecops-roadmap/releases/tag/v0.1.0) | SberTech-oriented requirements, 24-week delivery plan, weekly DoD, repository governance and reproducible workstation bootstrap |
+| Модульные и регрессионные тесты | 230 passed |
+| Интеграционные тесты с настоящим PostgreSQL | 12 passed |
+| Совокупное покрытие строк и ветвей приложения | 98,98% |
+| Базовая приёмка Q01-Q10 и лабораторная L01-L04 | Все проверки passed |
+| Нагрузка: 10 клиентов, около 60 секунд после прогрева | 12 079 запросов, 0 ошибок, p95 112,42 мс |
+| Восстановление зашифрованного backup в отдельную БД | 14 из 14 строк, совпадение checksum, 2,64 секунды |
+| Отрицательные проверки backup | Изменённый индекс, неверный ключ и повреждённый архив отклонены |
 
-## Planned Projects
+Это измерения конкретного локального прогона на небольшом наборе данных, не обещание производительности или доступности в production. GitHub Actions проверяет исходники, интеграцию и security gates; локальные Kubernetes drills не выполняются в hosted CI. Приватные отчёты, дампы, ключи и runtime-конфигурация в GitHub не публикуются. Порядок повторения проверок описан в [runbook](https://github.com/Abrakadabra124/enterprise-devsecops-platform/blob/main/docs/runbooks/production-lab.md).
 
-The repositories below contain milestones and issues but are not presented as completed work until their implementation phase starts:
+### Границы и следующие этапы
 
-- [Secure CI/CD](https://github.com/Abrakadabra124/secure-ci-cd)
-- [Kubernetes Platform Lab](https://github.com/Abrakadabra124/kubernetes-platform-lab)
-- [Terraform Infrastructure](https://github.com/Abrakadabra124/terraform-infrastructure)
-- [Observability & SRE Lab](https://github.com/Abrakadabra124/observability-sre-lab)
-- [Enterprise DevSecOps Platform](https://github.com/Abrakadabra124/enterprise-devsecops-platform)
+- Один host остаётся общей точкой отказа. Постоянные тома защищают от замены pod, но не от потери компьютера или его диска.
+- Backup пока запускается вручную и хранится на том же host. Расписание, независимое offsite-хранилище и восстановление на заданный момент ещё предстоит реализовать.
+- TLS для API/registry, централизованный вход OIDC, внешнее управление ключами и независимые домены отказа пока не закрыты. Публичный production-доступ не заявляется.
+- Короткий нагрузочный тест не подтверждает месячную доступность. Длительные проверки, эксплуатационные владельцы и доставка оповещений оператору остаются отдельными задачами.
 
-## Current Focus
+## Другие проекты
 
-- Completed Weeks 1-4: Linux, networking, Ansible hardening and troubleshooting
-- Next: secure Java build, container and CI/CD supply chain
-- OpenShift-compatible workload design
-- SLI/SLO, incident response and disaster recovery
+| Проект | Содержание |
+|---|---|
+| [Linux Secure Baseline v1.0.0](https://github.com/Abrakadabra124/linux-secure-baseline/releases/tag/v1.0.0) | Трёхузловая WSL2-лаборатория, Ansible hardening, диагностика сети и reverse proxy, сценарии отказов и security regression tests |
+| [DevSecOps Roadmap v0.1.0](https://github.com/Abrakadabra124/github-middle-devsecops-roadmap/releases/tag/v0.1.0) | Исходный 24-недельный план, критерии завершения этапов и подготовка рабочего окружения |
 
-## Roadmap
+Отдельные учебные репозитории [Secure CI/CD](https://github.com/Abrakadabra124/secure-ci-cd), [Kubernetes Platform Lab](https://github.com/Abrakadabra124/kubernetes-platform-lab), [Terraform Infrastructure](https://github.com/Abrakadabra124/terraform-infrastructure) и [Observability & SRE Lab](https://github.com/Abrakadabra124/observability-sre-lab) не представлены здесь как завершённые продукты. Реализованные в основном проекте контуры не означают завершение этих самостоятельных репозиториев.
 
-Following a public [24-week Middle DevSecOps roadmap](https://github.com/Abrakadabra124/github-middle-devsecops-roadmap) from engineering fundamentals to an enterprise capstone.
+## Как я подхожу к работе
 
-## Working Principles
-
-- Infrastructure and environments must be reproducible.
-- Security controls must be verified by negative tests.
-- Every alert needs impact, owner and runbook.
-- Every important decision documents alternatives and trade-offs.
-- Every project includes failure scenarios, recovery and an honest limitations section.
+- Требование -> проектирование -> реализация -> защита -> проверка -> документация.
+- Минимальные привилегии, секреты вне Git и явные границы доверия.
+- Идемпотентные операции, фиксированные зависимости и проверка реального конечного состояния.
+- Для изменений нужны сценарии отказа, откат и проверяемое восстановление.
+- Проверенные результаты, планы и ограничения описываются отдельно.
